@@ -1,7 +1,6 @@
 from fireguard_scout.utils import get_ip_addresses
 from datetime import datetime, timezone
 from fireguard_scout.utils import get_os_info
-import json
 
 
 def main():
