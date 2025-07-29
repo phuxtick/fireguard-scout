@@ -1,13 +1,14 @@
-# fireguard_scout/utils.py
+# fireguard_scout/metrics.py
+
 import psutil
-import socket
 
-def get_ip_addresses():
-    ip_map = {}
+def get_metrics():
+    cpu_percent = psutil.cpu_percent(interval=1)
+    mem = psutil.virtual_memory()
+    disk = psutil.disk_usage('/')
 
-    for iface_name, iface_addrs in psutil.net_if_addrs().items():
-        for addr in iface_addrs:
-            if addr.family == socket.AF_INET and not addr.address.startswith("127."):
-                ip_map[iface_name] = addr.address
-
-    return ip_map
+    return {
+        "cpu_percent": round(cpu_percent, 1),
+        "mem_percent": round(mem.percent, 1),
+        "disk_percent": round(disk.percent, 1)
+    }
