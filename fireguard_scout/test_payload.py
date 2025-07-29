@@ -13,9 +13,6 @@ def main():
     ip_data = get_ip_addresses()
     os_info = get_os_info()
 
-    print("OS Info:")
-    print(json.dumps(os_info, indent=2))
-
     payload = {
         "hostname": hostname,
         "location": "unknown",
