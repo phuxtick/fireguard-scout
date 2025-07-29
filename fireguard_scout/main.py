@@ -2,6 +2,7 @@ import socket
 import json
 import psutil
 import requests
+from fireguard_scout.utils import get_ip_addresses
 
 def collect_metrics():
     return {
@@ -26,12 +27,13 @@ def main():
 
     payload = {
         "hostname": hostname,
-        "location": "unknown",  # can update later
+        "location": "unknown",  # placeholder for future enhancement
         "services": {
             "cpu": f"{metrics['cpu_percent']}%",
             "memory": f"{metrics['mem_percent']}%",
             "disk": f"{metrics['disk_percent']}%"
         },
+        "interfaces": get_ip_addresses(),  # ← New addition
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
