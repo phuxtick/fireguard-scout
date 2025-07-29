@@ -23,6 +23,6 @@ def get_os_info():
 
     kernel_version = platform.release()
     return {
-        "os_version": os_version,
-        "kernel_version": kernel_version
+        "OS": os_version,
+        "Kernel": kernel_version
     }
