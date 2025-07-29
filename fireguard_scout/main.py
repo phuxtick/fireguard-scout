@@ -1,41 +1,37 @@
-import socket
 import json
-import psutil
+import socket
 import requests
-from fireguard_scout.utils import get_ip_addresses
-
-def collect_metrics():
-    return {
-        "cpu_percent": psutil.cpu_percent(interval=1),
-        "mem_percent": psutil.virtual_memory().percent,
-        "disk_percent": psutil.disk_usage("/").percent,
-    }
-
-def send_report(data):
-    try:
-        response = requests.post("http://localhost:8080/api/status", json=data)
-        print("Response:", response.status_code, response.text)
-    except Exception as e:
-        print("Error sending data:", e)
-
 from datetime import datetime, timezone
+from fireguard_scout.utils import get_ip_addresses, get_os_info
+from fireguard_scout.metrics import get_metrics  # assumed to return cpu/mem/disk dict
 
+FIREGUARD_URL = "http://localhost:8080/api/status"
 
-def main():
+def send_payload():
     hostname = socket.gethostname()
-    metrics = collect_metrics()
+    metrics = get_metrics()
+    ip_data = get_ip_addresses()
+    os_info = get_os_info()
 
     payload = {
         "hostname": hostname,
-        "location": "unknown",  # placeholder for future enhancement
+        "location": "unknown",  # Optionally set this later
         "services": {
             "cpu": f"{metrics['cpu_percent']}%",
             "memory": f"{metrics['mem_percent']}%",
             "disk": f"{metrics['disk_percent']}%"
         },
-        "interfaces": get_ip_addresses(),  # ← New addition
+        "interfaces": ip_data,
+        "system_info": os_info,
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
-    print(f"[SCOUT] Reporting in: {json.dumps(payload, indent=2)}")
-    send_report(payload)
+    try:
+        response = requests.post(FIREGUARD_URL, json=payload, timeout=5)
+        response.raise_for_status()
+        print(f"[+] Payload sent successfully: {response.status_code}")
+    except requests.RequestException as e:
+        print(f"[!] Failed to send payload: {e}")
+
+if __name__ == "__main__":
+    send_payload()
