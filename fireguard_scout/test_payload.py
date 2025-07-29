@@ -1,7 +1,6 @@
-from fireguard_scout.utils import get_ip_addresses
+from fireguard_scout.utils import get_ip_addresses, get_os_info
 from datetime import datetime, timezone
-from fireguard_scout.utils import get_os_info
-
+import json
 
 def main():
     hostname = "test-host"
@@ -9,10 +8,11 @@ def main():
         "cpu_percent": 12.3,
         "mem_percent": 45.6,
         "disk_percent": 78.9
-        
     }
 
+    ip_data = get_ip_addresses()
     os_info = get_os_info()
+
     print("OS Info:")
     print(json.dumps(os_info, indent=2))
 
@@ -24,11 +24,11 @@ def main():
             "memory": f"{metrics['mem_percent']}%",
             "disk": f"{metrics['disk_percent']}%"
         },
-        "interfaces": get_ip_addresses(),
+        "interfaces": ip_data,
+        "system_info": os_info,
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
-    import json
     print(json.dumps(payload, indent=2))
 
 if __name__ == "__main__":
