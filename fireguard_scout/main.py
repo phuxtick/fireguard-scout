@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from fireguard_scout.utils import get_ip_addresses, get_os_info
 from fireguard_scout.metrics import get_metrics  # assumed to return cpu/mem/disk dict
 
-FIREGUARD_URL = "http://localhost:8080/api/status"  # 🔁 Update as needed
+FIREGUARD_URL = "http://localhost:8080/api/status"
 
 def send_payload():
     hostname = socket.gethostname()
