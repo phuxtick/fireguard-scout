@@ -26,3 +26,14 @@ def get_os_info():
         "OS": os_version,
         "Kernel": kernel_version
     }
+
+def check_endpoints(endpoints, timeout=2):
+    result = {}
+    for host, port in endpoints:
+        key = f"{host}:{port}"
+        try:
+            with socket.create_connection((host, port), timeout=timeout):
+                result[key] = "ok"
+        except Exception:
+            result[key] = "fail"
+    return result
